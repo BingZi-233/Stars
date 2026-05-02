@@ -1,0 +1,11 @@
+{
+  "name": "HelloPlugin",
+  "version": "1.0.0",
+  "main": "online.bingzi.sample.HelloPlugin",
+  "authors": ["bingzi"],
+  "depend": [],
+  "softdepend": [],
+  "loadbefore": [],
+  "apiVersion": "1.0",
+  "description": "OneBot hello world"
+}

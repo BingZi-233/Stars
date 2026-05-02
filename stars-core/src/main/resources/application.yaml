@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: Stars
+  datasource:
+    url: ${STARS_DB_URL:jdbc:h2:file:./data/stars;AUTO_SERVER=TRUE;MODE=LEGACY}
+    driver-class-name: ${STARS_DB_DRIVER:org.h2.Driver}
+    username: ${STARS_DB_USER:sa}
+    password: ${STARS_DB_PASS:}
+server:
+  port: ${STARS_HTTP_PORT:8080}
+stars:
+  plugins:
+    dir: ${STARS_PLUGINS_DIR:./plugins}
+    auto-enable: ${STARS_AUTO_ENABLE:true}
+    admins: ${STARS_ADMINS:}
+shiro:
+  ws:
+    access-token: ${SHIRO_TOKEN:}
+    timeout: ${SHIRO_TIMEOUT:10}
+    server:
+      enable: ${SHIRO_SERVER_ENABLE:true}
+      url: ${SHIRO_SERVER_URL:/ws/shiro}
+    client:
+      enable: ${SHIRO_CLIENT_ENABLE:false}
+      url: ${SHIRO_CLIENT_URL:}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,plugins
