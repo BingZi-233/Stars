@@ -45,3 +45,6 @@ out/
 ### Stars plugins — only sample-plugin tracked ###
 /plugin/*
 !/plugin/sample-plugin/
+
+/data
+

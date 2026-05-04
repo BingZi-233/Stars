@@ -14,7 +14,7 @@ allprojects {
     }
 }
 
-val pluginBuildNames = listOf("sample-plugin", "NicknameGuard", "BanQueryPlugin")
+val pluginBuildNames = listOf("sample-plugin")
 
 val buildPluginApi = tasks.register("buildPluginApi") {
     group = "build"
