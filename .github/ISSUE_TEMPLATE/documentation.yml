@@ -1,0 +1,32 @@
+name: 文档改进
+description: 报告文档错误或建议补充内容
+labels: ["documentation"]
+body:
+  - type: dropdown
+    id: location
+    attributes:
+      label: 文档位置
+      options:
+        - README
+        - Wiki - 快速开始
+        - Wiki - 模块结构
+        - Wiki - 插件开发指南
+        - Wiki - 配置参考
+        - 代码注释
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 问题描述
+      description: 哪里有错误、缺失或不清晰
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: 建议内容
+      description: 应该如何修改或补充

@@ -1,0 +1,71 @@
+name: Bug Report
+description: 报告一个 Bug
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交 Bug 报告。请尽量填写完整，以便快速定位问题。
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 清晰描述遇到的问题
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 执行 ...
+        2. 配置 ...
+        3. 出现 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望行为
+      description: 期望发生什么
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 实际发生了什么，附上错误日志
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Stars 版本
+      placeholder: "0.0.1-SNAPSHOT / commit hash"
+    validations:
+      required: true
+
+  - type: input
+    id: jdk
+    attributes:
+      label: JDK 版本
+      placeholder: "21.0.x"
+    validations:
+      required: true
+
+  - type: input
+    id: onebot
+    attributes:
+      label: OneBot 实现
+      placeholder: "NapCat 1.x / Lagrange x.x"
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: 补充信息
+      description: 其他有助于定位问题的信息

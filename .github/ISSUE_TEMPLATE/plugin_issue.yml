@@ -1,0 +1,51 @@
+name: 插件问题
+description: 插件开发、加载或热插拔相关问题
+labels: ["plugin"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        遇到插件相关问题请填写此模板。
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: 问题类型
+      options:
+        - 插件无法加载
+        - 热插拔失败
+        - PluginContext API 使用问题
+        - 插件依赖冲突
+        - deploy 任务异常
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+    validations:
+      required: true
+
+  - type: textarea
+    id: plugin_json
+    attributes:
+      label: plugin.json
+      render: json
+      description: 粘贴你的 plugin.json 内容
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关日志
+      render: text
+      description: 粘贴启动日志或热插拔时的错误堆栈
+
+  - type: input
+    id: version
+    attributes:
+      label: Stars 版本
+      placeholder: "0.0.1-SNAPSHOT"
+    validations:
+      required: true
