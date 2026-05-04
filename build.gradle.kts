@@ -7,7 +7,7 @@ plugins {
 
 allprojects {
     group = "online.bingzi"
-    version = "0.0.1-SNAPSHOT"
+    version = System.getenv("RELEASE_VERSION") ?: "0.0.1-SNAPSHOT"
 
     repositories {
         mavenCentral()
