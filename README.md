@@ -36,8 +36,8 @@ java -jar stars-core/build/libs/stars-core-*.jar
 ## 模块结构
 
 | 模块 | 说明 |
-| --- | --- |
-| `stars-plugin-api` | 插件 SDK，插件 `compileOnly` 引用 |
+| :--- | :--- |
+| `stars-plugin-api` | 插件 SDK，以 compileOnly 方式引用 |
 | `stars-core` | 主程序，负责插件加载、事件总线、Bot 托管 |
 | `plugin/` 子目录 | 各业务插件（Gradle Composite Build，自动扫描加载） |
 
