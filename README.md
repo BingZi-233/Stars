@@ -1,5 +1,16 @@
 <div style="text-align: center;">
-  <img src="assets/logo.png" alt="Stars Logo" style="width: 160px;" />
+
+![logo.png](assets/logo.png)
+
+**基于 Spring Boot 4.x + Kotlin 的 OneBot 热插拔插件化机器人框架**
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.2.21-purple.svg)](https://kotlinlang.org)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.6-green.svg)](https://spring.io/projects/spring-boot)
+[![Version](https://img.shields.io/badge/version-1.0.0-orange.svg)](https://github.com/BingZi-233/Stars/releases)
+
+[快速开始](#快速开始) • [模块结构](#模块结构) • [插件开发](#插件开发) • [Wiki](https://github.com/BingZi-233/Stars/wiki)
+
 </div>
 
 # Stars
@@ -25,10 +36,10 @@ java -jar stars-core/build/libs/stars-core-*.jar
 ## 模块结构
 
 | 模块 | 说明 |
-| :--- | :--- |
+| --- | --- |
 | `stars-plugin-api` | 插件 SDK，插件 `compileOnly` 引用 |
 | `stars-core` | 主程序，负责插件加载、事件总线、Bot 托管 |
-| `plugin/*` | 各业务插件（Gradle Composite Build，自动扫描加载） |
+| `plugin/` 子目录 | 各业务插件（Gradle Composite Build，自动扫描加载） |
 
 ## 插件开发
 
