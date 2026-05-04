@@ -14,7 +14,16 @@ allprojects {
     }
 }
 
-val pluginBuildNames = listOf("sample-plugin")
+val pluginNameRegex = Regex("""rootProject\.name\s*=\s*["'](.+?)["']""")
+val pluginBuildNames = file("plugin")
+    .listFiles()
+    ?.filter { it.isDirectory && it.resolve("build.gradle.kts").exists() }
+    ?.mapNotNull { pluginDir ->
+        val settingsFile = pluginDir.resolve("settings.gradle.kts")
+        if (settingsFile.exists()) pluginNameRegex.find(settingsFile.readText())?.groupValues?.get(1)
+        else pluginDir.name
+    }
+    ?: emptyList()
 
 val buildPluginApi = tasks.register("buildPluginApi") {
     group = "build"
