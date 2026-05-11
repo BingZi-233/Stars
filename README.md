@@ -29,7 +29,16 @@
 java -jar stars-core/build/libs/stars-core-*.jar
 
 # 后台运行（在部署目录准备 .env 和 stars-core-*.jar）
-sh ./start-stars-core.sh
+sh ./start-stars-core.sh start
+
+# 查看状态
+sh ./start-stars-core.sh status
+
+# 停止
+sh ./start-stars-core.sh stop
+
+# 重启
+sh ./start-stars-core.sh restart
 ```
 
 主进程监听 `8080` 端口，在 `/ws/shiro` 暴露 OneBot WebSocket 服务端。
