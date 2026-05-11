@@ -19,19 +19,11 @@ import java.io.File
  * 以 owner `"@core"` 直接向 EventBus 注册，priority = [Int.MAX_VALUE] 确保
  * `/plugin` 指令优先于所有外部插件响应。不继承 JavaPlugin，是普通 Spring Bean。
  *
- * ## 支持的指令
+ * 支持：
+ * - `/help [插件名或命令关键字]`
+ * - `/plugin <list|load|unload|reload|enable|disable|info> ...`
  *
- * | 指令 | 说明 |
- * |---|---|
- * | `/plugin list` | 列出所有插件 |
- * | `/plugin load <jar名>` | 从 plugins 目录加载 JAR |
- * | `/plugin unload <name>` | 卸载插件 |
- * | `/plugin reload <name>` | 重载插件 |
- * | `/plugin enable <name>` | 启用插件 |
- * | `/plugin disable <name>` | 禁用插件 |
- * | `/plugin info <name>` | 查看插件详情 |
- *
- * 仅 [StarsPluginsProperties.admins] 中的 QQ 号可执行（白名单为空时所有人均无权限）。
+ * `/plugin` 仅 [StarsPluginsProperties.admins] 中的 QQ 号可执行。
  */
 @Component
 class CorePlugin(
@@ -47,14 +39,23 @@ class CorePlugin(
      */
     @SpringEventListener(ApplicationReadyEvent::class)
     fun register() {
+        registerHelpListeners()
+        registerPluginListeners()
+        log.info("CorePlugin: /help and /plugin command listeners registered (admins=${props.admins})")
+    }
+
+    private fun registerHelpListeners() {
         eventBus.subscribe(
             EventBus.Sub(
                 owner = "@core",
                 type = BotEvent.PrivateMessage::class.java,
                 listener = EventListener { e ->
-                    handle(e.bot, e.event.userId, e.event.rawMessage, group = null)
+                    handleHelp(e.bot, e.event.userId, e.event.rawMessage, group = null)
                 },
                 priority = Int.MAX_VALUE,
+                cmd = "/help",
+                usage = "/help [插件名或命令关键字]",
+                description = "查询已启用插件命令及用法",
             )
         )
         eventBus.subscribe(
@@ -62,18 +63,54 @@ class CorePlugin(
                 owner = "@core",
                 type = BotEvent.GroupMessage::class.java,
                 listener = EventListener { e ->
-                    handle(e.bot, e.event.userId, e.event.rawMessage, group = e.event.groupId)
+                    handleHelp(e.bot, e.event.userId, e.event.rawMessage, group = e.event.groupId)
                 },
                 priority = Int.MAX_VALUE,
+                cmd = "/help",
+                usage = "/help [插件名或命令关键字]",
+                description = "查询已启用插件命令及用法",
             )
         )
-        log.info("CorePlugin: /plugin command listeners registered (admins=${props.admins})")
+    }
+
+    private fun registerPluginListeners() {
+        eventBus.subscribe(
+            EventBus.Sub(
+                owner = "@core",
+                type = BotEvent.PrivateMessage::class.java,
+                listener = EventListener { e ->
+                    handlePlugin(e.bot, e.event.userId, e.event.rawMessage, group = null)
+                },
+                priority = Int.MAX_VALUE,
+                cmd = "/plugin",
+                usage = "/plugin <list|load|unload|reload|enable|disable|info> [...]",
+                description = "插件管理指令，仅管理员可用",
+            )
+        )
+        eventBus.subscribe(
+            EventBus.Sub(
+                owner = "@core",
+                type = BotEvent.GroupMessage::class.java,
+                listener = EventListener { e ->
+                    handlePlugin(e.bot, e.event.userId, e.event.rawMessage, group = e.event.groupId)
+                },
+                priority = Int.MAX_VALUE,
+                cmd = "/plugin",
+                usage = "/plugin <list|load|unload|reload|enable|disable|info> [...]",
+                description = "插件管理指令，仅管理员可用",
+            )
+        )
     }
 
     // ─── 消息路由 ─────────────────────────────────────────────────────────────
 
-    private fun handle(bot: Bot, userId: Long, raw: String, group: Long?): EventResult {
-        if (!raw.trimStart().startsWith("/plugin")) return EventResult.CONTINUE
+    private fun handleHelp(bot: Bot, userId: Long, raw: String, group: Long?): EventResult {
+        val args = raw.trim().split(Regex("\\s+"))
+        reply(bot, userId, group, HelpRenderer.render(eventBus.listMessageCommands(), args.getOrNull(1)))
+        return EventResult.INTERCEPT
+    }
+
+    private fun handlePlugin(bot: Bot, userId: Long, raw: String, group: Long?): EventResult {
 
         if (userId !in props.admins) {
             reply(bot, userId, group, "未授权：您没有执行插件管理指令的权限。")
@@ -149,7 +186,7 @@ class CorePlugin(
             }.trimEnd()
         }
 
-        else -> "Stars 插件管理器\n可用子命令：list / load / unload / reload / enable / disable / info"
+        else -> "Stars 插件管理器\n用法：/plugin <list|load|unload|reload|enable|disable|info> [...]"
     }
 
     private fun resolveJar(dir: File, token: String): File? {

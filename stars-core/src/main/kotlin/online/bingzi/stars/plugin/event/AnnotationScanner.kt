@@ -29,6 +29,8 @@ class AnnotationScanner(private val bus: EventBus) {
     private class AnnDesc(
         val cmd: String?,
         val pattern: String?,
+        val usage: String?,
+        val description: String?,
         val priority: Int,
         /** 参数类型必须是该类或其子类，否则 warn + 跳过 */
         val expectedBase: Class<out BotEvent>,
@@ -93,6 +95,8 @@ class AnnotationScanner(private val bus: EventBus) {
                     priority = ann.priority,
                     cmd = ann.cmd?.takeIf(String::isNotEmpty),
                     pattern = regexPattern,
+                    usage = ann.usage?.takeIf(String::isNotEmpty),
+                    description = ann.description?.takeIf(String::isNotEmpty),
                 )
             )
 
@@ -108,25 +112,25 @@ class AnnotationScanner(private val bus: EventBus) {
      */
     private fun findAnnotation(m: Method): AnnDesc? {
         m.getAnnotation(OnPrivateMessage::class.java)?.let {
-            return AnnDesc(it.cmd, it.pattern, it.priority, BotEvent.PrivateMessage::class.java)
+            return AnnDesc(it.cmd, it.pattern, it.usage, it.description, it.priority, BotEvent.PrivateMessage::class.java)
         }
         m.getAnnotation(OnGroupMessage::class.java)?.let {
-            return AnnDesc(it.cmd, it.pattern, it.priority, BotEvent.GroupMessage::class.java)
+            return AnnDesc(it.cmd, it.pattern, it.usage, it.description, it.priority, BotEvent.GroupMessage::class.java)
         }
         m.getAnnotation(OnGuildMessage::class.java)?.let {
-            return AnnDesc(it.cmd, it.pattern, it.priority, BotEvent.GuildMessage::class.java)
+            return AnnDesc(it.cmd, it.pattern, it.usage, it.description, it.priority, BotEvent.GuildMessage::class.java)
         }
         m.getAnnotation(OnAnyMessage::class.java)?.let {
-            return AnnDesc(it.cmd, it.pattern, it.priority, BotEvent::class.java)
+            return AnnDesc(it.cmd, it.pattern, it.usage, it.description, it.priority, BotEvent::class.java)
         }
         m.getAnnotation(OnNotice::class.java)?.let {
-            return AnnDesc(null, null, it.priority, BotEvent::class.java)
+            return AnnDesc(null, null, null, null, it.priority, BotEvent::class.java)
         }
         m.getAnnotation(OnRequest::class.java)?.let {
-            return AnnDesc(null, null, it.priority, BotEvent::class.java)
+            return AnnDesc(null, null, null, null, it.priority, BotEvent::class.java)
         }
         m.getAnnotation(OnMetaEvent::class.java)?.let {
-            return AnnDesc(null, null, it.priority, BotEvent::class.java)
+            return AnnDesc(null, null, null, null, it.priority, BotEvent::class.java)
         }
         return null
     }

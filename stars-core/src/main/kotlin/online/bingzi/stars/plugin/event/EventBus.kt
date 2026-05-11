@@ -21,6 +21,21 @@ private val log = LoggerFactory.getLogger(EventBus::class.java)
 @Component
 class EventBus {
 
+    enum class MessageScope(val label: String) {
+        PRIVATE("私聊"),
+        GROUP("群聊"),
+        GUILD("频道"),
+        ANY("任意消息"),
+    }
+
+    data class MessageCommand(
+        val owner: String,
+        val trigger: String,
+        val usage: String,
+        val description: String,
+        val scopes: Set<MessageScope>,
+    )
+
     /**
      * 单个订阅记录。
      *
@@ -38,6 +53,8 @@ class EventBus {
         val priority: Int = 0,
         val cmd: String? = null,
         val pattern: Regex? = null,
+        val usage: String? = null,
+        val description: String? = null,
     )
 
     // 写时复制：每次修改都替换整个 List（immutable snapshot），dispatch 读到的永远是一致快照。
@@ -62,6 +79,29 @@ class EventBus {
         synchronized(subs) {
             subs.replaceAll { _, list -> list.filter { it.owner != owner } }
         }
+    }
+
+    fun listMessageCommands(): List<MessageCommand> {
+        val snapshot = subs.values.flatten()
+
+        return snapshot.mapNotNull { sub ->
+            val scope = scopeOf(sub.type) ?: return@mapNotNull null
+            val trigger = sub.cmd ?: sub.pattern?.pattern ?: return@mapNotNull null
+            val usage = sub.usage?.trim().orEmpty().ifBlank { trigger }
+            MessageCommand(
+                owner = sub.owner,
+                trigger = trigger,
+                usage = usage,
+                description = sub.description?.trim().orEmpty(),
+                scopes = setOf(scope),
+            )
+        }
+            .groupBy { listOf(it.owner, it.usage, it.description) }
+            .values
+            .map { grouped ->
+                grouped.first().copy(scopes = grouped.flatMap { it.scopes }.toSortedSet(compareBy(MessageScope::ordinal)))
+            }
+            .sortedWith(compareBy<MessageCommand>({ it.owner.lowercase() }, { it.usage.lowercase() }, { it.trigger.lowercase() }))
     }
 
     /**
@@ -110,5 +150,13 @@ class EventBus {
         }
 
         return EventResult.CONTINUE
+    }
+
+    private fun scopeOf(type: Class<out BotEvent>): MessageScope? = when {
+        type == BotEvent::class.java -> MessageScope.ANY
+        BotEvent.PrivateMessage::class.java.isAssignableFrom(type) -> MessageScope.PRIVATE
+        BotEvent.GroupMessage::class.java.isAssignableFrom(type) -> MessageScope.GROUP
+        BotEvent.GuildMessage::class.java.isAssignableFrom(type) -> MessageScope.GUILD
+        else -> null
     }
 }
