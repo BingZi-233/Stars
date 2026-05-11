@@ -25,8 +25,11 @@
 # 构建核心 + 全部插件
 ./gradlew buildAll
 
-# 运行
+# 前台运行
 java -jar stars-core/build/libs/stars-core-*.jar
+
+# 后台运行（在部署目录准备 .env 和 stars-core-*.jar）
+sh ./start-stars-core.sh
 ```
 
 主进程监听 `8080` 端口，在 `/ws/shiro` 暴露 OneBot WebSocket 服务端。

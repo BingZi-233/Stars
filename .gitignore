@@ -47,4 +47,6 @@ out/
 !/plugin/sample-plugin/
 
 /data
-
+/logs/
+/stars-core/logs/
+/.codex/

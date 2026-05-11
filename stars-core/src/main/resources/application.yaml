@@ -8,6 +8,16 @@ spring:
     password: ${STARS_DB_PASS:}
 server:
   port: ${STARS_HTTP_PORT:8080}
+logging:
+  file:
+    name: ${LOG_FILE:logs/latest.log}
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN:logs/archive/stars.%d{yyyy-MM-dd}.%i.log.gz}
+      max-file-size: ${LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE:10MB}
+      max-history: ${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:14}
+      total-size-cap: ${LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP:1GB}
+      clean-history-on-start: ${LOGBACK_ROLLINGPOLICY_CLEAN_HISTORY_ON_START:false}
 stars:
   plugins:
     dir: ${STARS_PLUGINS_DIR:./plugins}
